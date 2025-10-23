@@ -36,8 +36,3 @@ C.A.R.L. is a portable drum sequencer that lets users tap out, save, and play rh
 - **Electronics:** KiCAD  
 - **3D Design:** Fusion 360  
 - **Firmware:** Arduino / PlatformIO  
-
----
-
-## License
-Open-source under the MIT License.
