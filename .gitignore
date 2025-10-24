@@ -1,0 +1,10 @@
+.direnv
+.cache
+.envrc
+.pio
+.platformio
+.clangd
+.clang_complete
+.gcc-flags.json
+.ccls
+compile_commands.json
