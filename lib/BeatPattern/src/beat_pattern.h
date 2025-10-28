@@ -4,6 +4,6 @@
 
 typedef uint32_t beat_pattern;
 
-beat_pattern cycle_beat(beat_pattern beat, uint8_t position);
+beat_pattern cycleBeat(beat_pattern beat, uint8_t position);
 
 #endif // !H_CARL_BEAT_PATTERN

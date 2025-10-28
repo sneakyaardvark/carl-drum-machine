@@ -4,7 +4,7 @@
 static int fromGrayCode(int);
 static int toGrayCode(int);
 
-beat_pattern cycle_beat(beat_pattern beat, uint8_t position) {
+beat_pattern cycleBeat(beat_pattern beat, uint8_t position) {
   beat_pattern mask = 3 << position; // 0b11 in the position of the note
   beat_pattern newbeat = (beat & mask) >> position; // the current value as LSBs
   newbeat = fromGrayCode(newbeat);
