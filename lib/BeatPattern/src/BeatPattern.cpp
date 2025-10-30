@@ -1,4 +1,4 @@
-#include "beat_pattern.h"
+#include "BeatPattern.hpp"
 #include <stdint.h>
 
 
