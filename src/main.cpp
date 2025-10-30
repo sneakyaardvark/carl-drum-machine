@@ -1,6 +1,6 @@
 #include "config.h"
 #include <Arduino.h>
-#include <beat_pattern.h>
+#include <BeatPattern.hpp>
 
 struct carl {
   uint8_t current_voice = 0;
