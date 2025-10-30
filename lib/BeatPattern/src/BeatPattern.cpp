@@ -10,8 +10,12 @@ void BeatPattern::cycleBeat(beat_pattern* beat, uint8_t position) {
   // call BeatChanged(position)
 }
 
-void  BeatPattern::clear() {
+void BeatPattern::clear() {
   beat = 0;
   // TODO: trigger cleared event to reset all LEDs
+}
+
+beat_pattern BeatPattern::get() {
+  return beat;
 }
 
