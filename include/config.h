@@ -4,5 +4,5 @@
 #define CARL_FIRMWARE_VERSION "0"
 #define NUM_VOICES 4
 #define NUM_PATTERNS 4
-#define DEFAULT_TEMPO 100
+#define DEFAULT_TEMPO 120
 #endif // !H_CARL_CONFIG
