@@ -57,7 +57,7 @@ void I2SWriterTask(void* param) {
 }
 
 void I2SOutput::begin() {
-  I2S.setPins(5, 25, 26, 35, 0); // TODO
+  I2S.setPins(I2S_BCLK, I2S_LRCLK, I2S_DOUT, -1, -1);
   I2S.begin(I2S_MODE_STD, 16000, I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_MONO);
   
   xTaskCreatePinnedToCore(I2SWriterTask, "i2s_writer", 4096, this, 2, &i2sWriterTask, 2);
