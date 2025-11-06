@@ -1,3 +1,7 @@
+/** 
+ * parts of this file are derived from https://github.com/atomic14/esp-asteroids/blob/main/src/Audio/I2SOutput.cpp
+ * Under the Unlicense
+ */
 #include "I2SOutput.hpp"
 #include "freertos/idf_additions.h"
 #include <math.h>
@@ -8,7 +12,7 @@
 
 typedef struct i2s_frame {
   int16_t left;
-  // int16_t right;
+  int16_t right;
 } frame_t;
 
 void I2SWriterTask(void* param) {
@@ -35,7 +39,7 @@ void I2SWriterTask(void* param) {
             sample = tanhf(sample);
             // output it
             frames[i].left = sample * 16383; // WHY magic number?
-            // frames[i].right = sample * 16383;
+            frames[i].right = sample * 16383;
           }
           // how many bytes do we now have to send
           availableBytes = NUM_FRAMES_TO_SEND * sizeof(frame_t);
