@@ -12,6 +12,7 @@
           platformio
           doxygen
           clang-tools
+          ccls
         ];
         shellHook = ''
           export PLATFORMIO_CORE_DIR=$PWD/.platformio
