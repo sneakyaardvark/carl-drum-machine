@@ -1,3 +1,7 @@
+/** 
+ * parts of this file are derived from https://github.com/atomic14/esp-asteroids
+ * Under the Unlicense
+ */
 #include "WAVFile.hpp"
 #include <FS.h>
 #include <SPIFFS.h>
@@ -5,6 +9,21 @@
 #pragma pack(push, 1)
 typedef struct wav_header {
   char riff_header[4];
+  int32_t wav_size; // size of the wav portion - File size - 8
+  char wave_header[4]; // contains "WAVE"
+
+  char fmt_header[4]; // contains "fmt "
+  int32_t fmt_chunk_size; // 16 for pcm
+  int16_t audio_format;   // Should be 1 for PCM. 3 for IEEE Float
+  int16_t num_channels;
+  int32_t sample_rate;
+  int32_t byte_rate;        // Number of bytes per second. sample_rate * num_channels * Bytes Per Sample
+  int16_t sample_alignment; // num_channels * Bytes Per Sample
+  int16_t bit_depth;        // Number of bits per sample
+
+  // Data
+  char data_header[4]; // Contains "data"
+  int32_t data_bytes;  // Number of bytes in data. Number of samples * num_channels * sample byte size
 } wav_header_t;
 #pragma pack(pop)
 
@@ -22,7 +41,7 @@ WAVFile::WAVFile(const char* filename, size_t frame_size) {
 
   // read header
   wav_header_t header;
-  file.read(&header, sizeof(wav_header_t));
+  file.read((uint8_t*)&header, sizeof(wav_header_t));
   if (!is_header_valid(&header)) {
     // err: invalid WAV
   }
@@ -31,7 +50,7 @@ WAVFile::WAVFile(const char* filename, size_t frame_size) {
 
     // returns size_t for # of bytes, might want to store how large the buffer is
     // for playback
-    file.read(&samples, frame_size * 2);
+    file.read(samples, frame_size * 2);
   }
 
   file.close();
@@ -41,7 +60,7 @@ int16_t WAVFile::get_number_samples() {
   return number_samples;
 }
 
-uint16_t WAVFile::get_sample(int16_t position) {
+uint8_t WAVFile::get_sample(int16_t position) {
   return samples[position];
 }
 
