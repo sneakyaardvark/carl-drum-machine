@@ -31,8 +31,8 @@ void I2SWriterTask(void* param) {
             float sample = 0;
             for (auto &voice : output->voices) {
               if (voice.play_position < voice.src->get_number_samples()) {
-                sample += voice.volume * (voice.src->get+smaple(voice.play_position) - 128.0f) / 128.0f;
-                voice.play_position++;
+                sample += voice.volume * (voice.src->get_sample(voice.play_position) - 128.0f) / 128.0f;
+                voice.play_position += 1;
               }
             }
             // apply clipping
