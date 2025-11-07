@@ -5,7 +5,6 @@
 #ifndef H_WAVFILE
 #define H_WAVFILE
 
-#include <cstdint>
 #include <stdint.h>
 #include <stddef.h>
 
