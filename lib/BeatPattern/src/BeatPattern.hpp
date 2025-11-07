@@ -9,7 +9,8 @@ class BeatPattern {
     beat_pattern beat;
 
   public:
-    void cycleBeat(beat_pattern* beat, uint8_t position);
+    BeatPattern();
+    void cycleBeat(uint8_t position);
     void clear();
     beat_pattern get();
 };
