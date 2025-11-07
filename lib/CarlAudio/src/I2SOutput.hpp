@@ -20,7 +20,7 @@
  * @brief a representation of a sample, such as a drum kick.
  */
 typedef struct voice_t {
-  WAVFile* wav; /**< the WAV file corresponding to this sample */
+  WAVFile* src; /**< the WAV file corresponding to this sample */
   volatile int16_t play_position; /**< the play position of this sample */
   float volume; /**< the volume of this sample */
 } Voice_t;
