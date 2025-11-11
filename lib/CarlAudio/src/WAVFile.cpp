@@ -14,16 +14,16 @@ typedef struct wav_header {
 
   char fmt_header[4]; // contains "fmt "
   int32_t fmt_chunk_size; // 16 for pcm
-  int16_t audio_format;   // Should be 1 for PCM. 3 for IEEE Float
-  int16_t num_channels;
-  int32_t sample_rate;
-  int32_t byte_rate;        // Number of bytes per second. sample_rate * num_channels * Bytes Per Sample
-  int16_t sample_alignment; // num_channels * Bytes Per Sample
-  int16_t bit_depth;        // Number of bits per sample
+  uint16_t audio_format;   // Should be 1 for PCM. 3 for IEEE Float
+  uint16_t num_channels;
+  uint32_t sample_rate;
+  uint32_t byte_rate;        // Number of bytes per second. sample_rate * num_channels * Bytes Per Sample
+  uint16_t sample_alignment; // num_channels * Bytes Per Sample
+  uint16_t bit_depth;        // Number of bits per sample
 
   // Data
   char data_header[4]; // Contains "data"
-  int32_t data_bytes;  // Number of bytes in data. Number of samples * num_channels * sample byte size
+  uint32_t data_bytes;  // Number of bytes in data. Number of samples * num_channels * sample byte size
 } wav_header_t;
 #pragma pack(pop)
 
@@ -65,6 +65,8 @@ uint8_t WAVFile::get_sample(int16_t position) {
 }
 
 static bool is_header_valid(wav_header_t* header) {
-  // TODO: check validity: bit_depth == 16, etc
-  return true;
+  return 
+    header->bit_depth == 16 && // 16 bit
+    header->audio_format == 1 &&  // PCM
+    header->sample_rate <= 44100; // 44.1KHz
 }
