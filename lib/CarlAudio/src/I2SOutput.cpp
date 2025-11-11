@@ -38,7 +38,7 @@ void I2SWriterTask(void* param) {
             // apply clipping
             sample = tanhf(sample);
             // output it
-            frames[i].left = sample * 16383; // WHY magic number?
+            frames[i].left = sample * 16383; // multiply to get a reasonable sample value out of the ratio
             frames[i].right = sample * 16383;
           }
           // how many bytes do we now have to send
