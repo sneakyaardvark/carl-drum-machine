@@ -2,6 +2,7 @@
 .direnv
 .cache
 .envrc
+doxygen/
 
 # platformio
 .pio
