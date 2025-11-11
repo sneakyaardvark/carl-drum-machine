@@ -11,31 +11,28 @@ struct carl {
 struct carl CARL;
 
 void setup() {
-  // MAYBE: sound/logic test on startup
+//test modes:
+//	0 - bare GPIO hardware testing - switches, pots
+//		  connected directly to device
+//	1 - signal component testing - LED, LCD, (SD) 
+//		  devices all connected, testing modularly or in sequence
+//	2 - audio signal component testing
+//		  speaker/speaker amp testing with signal sweep, pwm variation signal
 
-  // core 1: logic
-  //          good connections to devices
-  //          memory allocation
-  //          send some default sound test pattern
-
-  // core 2: playback
-  //          init / empty relevant active memory
-  //          playback sound test pattern
 }
 
 void loop() {
-  // core 1: logic
-  //          beat pattern changes
-  //            MAYBE: "peeking" to know nature of next beats
-  //          voice channel changes
-  //          tempo changes
-
-  // core 2: playback
-  //          sound output
-  //            
-  //          if digital, effects 
-  //            a very basic digital lowpass, highpass,
-  //            or reverb could be done at playback
-
+//test mode select
+//
+//  0
+//    user-defined pins through user input OR file
+//    CLI output for concurrent
+//      can swap components at will, device wont care
+//  1
+//    all these pins should be fairly standardized over our workflow
+//    concurrent or sequential display operation
+//  2
+//    all these pins are also standardized over our workflow
+//    signal sweep, pwm output
 }
 

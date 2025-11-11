@@ -1,0 +1,33 @@
+{
+    "configurations": [
+        {
+            "name": "PlatformIO",
+            "includePath": [
+                "c:/Users/ugly/Documents/GitHub/carl-drum-machine/include",
+                "c:/Users/ugly/Documents/GitHub/carl-drum-machine/src",
+                "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/BeatPattern/src",
+                "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/HardwareTest",
+                "C:\\Users\\ugly\\AppData\\Local\\Arduino15\\**"
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "c:/Users/ugly/Documents/GitHub/carl-drum-machine/include",
+                    "c:/Users/ugly/Documents/GitHub/carl-drum-machine/src",
+                    "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/BeatPattern/src",
+                    "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/HardwareTest",
+                    ""
+                ]
+            },
+            "defines": [
+                "PLATFORMIO=60118",
+                ""
+            ],
+            "compilerPath": "C:/msys64/ucrt64/bin/gcc.exe",
+            "compilerArgs": [
+                ""
+            ]
+        }
+    ],
+    "version": 4
+}

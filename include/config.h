@@ -5,4 +5,7 @@
 #define NUM_VOICES 4
 #define NUM_PATTERNS 4
 #define DEFAULT_TEMPO 120
+
+#define NUM_SWITCHTEST 8
+#define NUM_POTTEST 4
 #endif // !H_CARL_CONFIG
