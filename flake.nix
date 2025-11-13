@@ -10,6 +10,7 @@
       devShell = pkgs.mkShellNoCC {
         packages = with pkgs; [
           platformio
+          platformio-core.udev
           doxygen
           clang-tools
           ccls
