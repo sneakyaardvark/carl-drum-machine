@@ -31,15 +31,19 @@ void I2SWriterTask(void* param) {
             float sample = 0;
             for (auto &voice : output->voices) {
               if (voice.play_position < voice.src->get_number_samples()) {
-                sample += voice.volume * (voice.src->get_sample(voice.play_position) - 128.0f) / 128.0f;
+                // sample += voice.volume * (voice.src->get_sample(voice.play_position) - 128.0f) / 128.0f;
+                // sample += voice.volume * (voice.src->get_sample(voice.play_position) - INT16_MAX) / INT16_MAX;
+                sample += (voice.volume * voice.src->get_sample(voice.play_position)) / INT16_MAX;
                 voice.play_position += 1;
               }
             }
             // apply clipping
             sample = tanhf(sample);
             // output it
-            frames[i].left = sample * 16383; // multiply to get a reasonable sample value out of the ratio
-            frames[i].right = sample * 16383;
+            // frames[i].left = frames[i].right = sample * (INT16_MAX / 2) - 1;
+            frames[i].left = frames[i].right = sample * INT16_MAX;
+            // frames[i].left = sample * 16383; // multiply to get a reasonable sample value out of the ratio
+            // frames[i].right = sample * 16383;
           }
           // how many bytes do we now have to send
           availableBytes = NUM_FRAMES_TO_SEND * sizeof(frame_t);

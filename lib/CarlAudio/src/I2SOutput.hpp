@@ -21,7 +21,7 @@
  */
 typedef struct voice_t {
   WAVFile* src; /**< the WAV file corresponding to this sample */
-  volatile int16_t play_position; /**< the play position of this sample */
+  volatile uint32_t play_position; /**< the play position of this sample */
   float volume; /**< the volume of this sample */
 } Voice_t;
 

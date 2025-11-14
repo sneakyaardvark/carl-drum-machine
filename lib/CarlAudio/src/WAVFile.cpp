@@ -48,15 +48,16 @@ WAVFile::WAVFile(const char* filename, size_t frame_size) {
     Serial.println("Error: invlaid WAV header");
   }
   else {
-    // read first frame of samples
+    // number_samples = header.data_bytes / (header.bit_depth / 8);
+    number_samples = header.data_bytes / sizeof(int16_t);
+    samples = (int16_t *)malloc(header.data_bytes);
+    size_t bytes_read = file.read((uint8_t *)samples, header.data_bytes);
 
-    // returns size_t for # of bytes, might want to store how large the buffer is
-    // for playback
-    // file.read(samples, frame_size * 2);
-    number_samples = header.data_bytes;
-    samples = (uint8_t *)malloc(number_samples);
-    size_t bytes_read = file.read(samples, header.data_bytes);
-    if (bytes_read != number_samples) {
+    if (bytes_read != header.data_bytes) {
+      Serial.print("read bytes: ");
+      Serial.println(bytes_read);
+      Serial.print("total data bytes: ");
+      Serial.println(header.data_bytes);
       Serial.println("Error: did not read all samples");
     }
   }
@@ -68,9 +69,27 @@ int16_t WAVFile::get_number_samples() {
   return number_samples;
 }
 
-uint8_t WAVFile::get_sample(int16_t position) {
+uint8_t WAVFile::get_sample(uint32_t position) {
   return samples[position];
 }
+union byte_to_u16 {
+  struct double_byte {
+    uint8_t byte0;
+    uint8_t byte1;
+  } bytes;
+  int16_t u16;
+};
+
+// int16_t WAVFile::get_sample2(uint32_t position) {
+//   return samples[position];
+//   position *= 2;
+//   return (samples[position] << 8) | samples[position + 1];
+//   // return ((int16_t *) samples)[position];
+//   union byte_to_u16 test = {
+//     { samples[position], samples[position + 1] }
+//   };
+//   return test.u16;
+// }
 
 static bool is_header_valid(wav_header_t* header) {
   if (header->bit_depth != 16) {
