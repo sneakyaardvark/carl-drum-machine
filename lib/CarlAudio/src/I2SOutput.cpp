@@ -53,8 +53,9 @@ void I2SWriterTask(void* param) {
         }
         // do we have something to write?
         if (availableBytes > 0) {
-          // write to I2S
-          bytesWritten = output->I2S.write((uint8_t*)frames, availableBytes);
+          // write to I2S. If for some reason not all of the bytes get written, we save
+          // the buffer position and offset the address of the frames
+          bytesWritten = output->I2S.write(buffer_position + (uint8_t*)frames, availableBytes);
           availableBytes -= bytesWritten;
           buffer_position += bytesWritten;
 
@@ -66,7 +67,7 @@ void I2SWriterTask(void* param) {
 
 void I2SOutput::begin() {
   I2S.setPins(I2S_BCLK, I2S_LRCLK, I2S_DOUT);
-  I2S.begin(I2S_MODE_STD, 48000, I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_STEREO);
+  I2S.begin(I2S_MODE_STD, I2S_SAMPLE_RATE, I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_STEREO);
   
   xTaskCreatePinnedToCore(I2SWriterTask, "i2s_writer", 4096, this, 2, &i2sWriterTask, 1);
 }

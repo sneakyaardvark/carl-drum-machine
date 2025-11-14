@@ -15,6 +15,7 @@
 #define I2S_DOUT 26
 #define I2S_BCLK 5
 #define I2S_LRCLK 25
+#define I2S_SAMPLE_RATE 48000
 
 /**
  * @brief a representation of a sample, such as a drum kick.
