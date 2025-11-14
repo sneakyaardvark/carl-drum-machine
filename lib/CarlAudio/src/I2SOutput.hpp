@@ -12,9 +12,9 @@
 #include <stdint.h>
 #include "WAVFile.hpp"
 
-#define I2S_DOUT 7
-#define I2S_BCLK 8
-#define I2S_LRCLK 9
+#define I2S_DOUT 26
+#define I2S_BCLK 5
+#define I2S_LRCLK 25
 
 /**
  * @brief a representation of a sample, such as a drum kick.
