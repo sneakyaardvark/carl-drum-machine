@@ -69,7 +69,7 @@ int16_t WAVFile::get_number_samples() {
   return number_samples;
 }
 
-uint8_t WAVFile::get_sample(uint32_t position) {
+int16_t WAVFile::get_sample(uint32_t position) {
   return samples[position];
 }
 union byte_to_u16 {

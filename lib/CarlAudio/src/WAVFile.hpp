@@ -29,7 +29,7 @@ class WAVFile {
      * @param position which sample to get
      * @return the sample
      */
-    uint8_t get_sample(uint32_t position);
+    int16_t get_sample(uint32_t position);
     // int16_t get_sample2(uint32_t position);
     /**
      * @brief get the number of samples
