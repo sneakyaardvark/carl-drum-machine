@@ -3,8 +3,10 @@
  * Under the Unlicense
  */
 #include "WAVFile.hpp"
+#include <HardwareSerial.h>
 #include <FS.h>
 #include <SPIFFS.h>
+#include <stdlib.h>
 
 #pragma pack(push, 1)
 typedef struct wav_header {
@@ -43,14 +45,20 @@ WAVFile::WAVFile(const char* filename, size_t frame_size) {
   wav_header_t header;
   file.read((uint8_t*)&header, sizeof(wav_header_t));
   if (!is_header_valid(&header)) {
-    // err: invalid WAV
+    Serial.println("Error: invlaid WAV header");
   }
   else {
     // read first frame of samples
 
     // returns size_t for # of bytes, might want to store how large the buffer is
     // for playback
-    file.read(samples, frame_size * 2);
+    // file.read(samples, frame_size * 2);
+    number_samples = header.data_bytes;
+    samples = (uint8_t *)malloc(number_samples);
+    size_t bytes_read = file.read(samples, header.data_bytes);
+    if (bytes_read != number_samples) {
+      Serial.println("Error: did not read all samples");
+    }
   }
 
   file.close();
@@ -65,8 +73,20 @@ uint8_t WAVFile::get_sample(int16_t position) {
 }
 
 static bool is_header_valid(wav_header_t* header) {
-  return 
-    header->bit_depth == 16 && // 16 bit
-    header->audio_format == 1 &&  // PCM
-    header->sample_rate <= 44100; // 44.1KHz
+  if (header->bit_depth != 16) {
+    Serial.println("bit_depth not 16");
+    return false;
+  } else if (header->audio_format != 1) {
+    Serial.println("audio format not PCM");
+    return false;
+  } else if (header->sample_rate != 48000) {
+    Serial.print("sample_rate==");
+    Serial.println(header->sample_rate);
+    return false;
+  }
+  return true;
+}
+
+WAVFile::~WAVFile() {
+  free(samples);
 }

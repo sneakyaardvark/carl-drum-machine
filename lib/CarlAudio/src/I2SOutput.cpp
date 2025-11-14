@@ -61,8 +61,23 @@ void I2SWriterTask(void* param) {
 }
 
 void I2SOutput::begin() {
-  I2S.setPins(I2S_BCLK, I2S_LRCLK, I2S_DOUT, -1, -1);
-  I2S.begin(I2S_MODE_STD, 16000, I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_MONO);
+  I2S.setPins(I2S_BCLK, I2S_LRCLK, I2S_DOUT);
+  I2S.begin(I2S_MODE_STD, 48000, I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_STEREO);
   
-  xTaskCreatePinnedToCore(I2SWriterTask, "i2s_writer", 4096, this, 2, &i2sWriterTask, 2);
+  xTaskCreatePinnedToCore(I2SWriterTask, "i2s_writer", 4096, this, 2, &i2sWriterTask, 1);
+}
+
+void I2SOutput::add(WAVFile* file, float volume) {
+  for (auto &voice : voices) {
+    if (voice.play_position == voice.src->get_number_samples())
+    {
+        voice.src = file;
+        voice.play_position = 0;
+        voice.volume = volume;
+        return;
+    }
+  }
+  voices.push_back({.src = file,
+                    .play_position = 0,
+                    .volume = volume});
 }
