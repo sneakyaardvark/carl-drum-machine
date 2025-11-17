@@ -34,7 +34,7 @@ class WAVFile {
      * @brief get the number of samples
      * @return the number of samples
      */
-    int16_t get_number_samples();
+    int32_t get_number_samples();
 };
 
 #endif // !H_WAVFILE

@@ -8,6 +8,7 @@
 #include <SPIFFS.h>
 #include <stdlib.h>
 #include "WAVHeader.h"
+#include <esp_log.h>
 
 static bool is_header_valid(wav_header_t* header);
 
@@ -45,7 +46,7 @@ WAVFile::WAVFile(const char* filename, size_t frame_size) {
   file.close();
 }
 
-int16_t WAVFile::get_number_samples() {
+int32_t WAVFile::get_number_samples() {
   return number_samples;
 }
 

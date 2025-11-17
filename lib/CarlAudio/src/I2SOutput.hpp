@@ -32,7 +32,6 @@ typedef struct voice_t {
 class I2SOutput {
   private:
     TaskHandle_t i2sWriterTask;
-    QueueHandle_t i2sQueue;
     std::list<Voice_t> voices;
     I2SClass I2S;
   public:
