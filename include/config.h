@@ -8,4 +8,10 @@
 
 #define NUM_SWITCHTEST 8
 #define NUM_POTTEST 4
+
+#define I2C_SDA 21
+#define I2C_SCL 22
+
+#define DEFAULT_BAUD 115200
+
 #endif // !H_CARL_CONFIG
