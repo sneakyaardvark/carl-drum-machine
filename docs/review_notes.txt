@@ -1,0 +1,22 @@
+Team 8 reviews Team 5 11/18/2025
+Nawaf, Nawaf
+Andrew, Ethan, Christian, Bao
+
+Number of sensors
+ - 8 buttons for beat, each with 2 LEDs
+ - Function buttons, play has 1 LED
+
+Power supply
+ - multiple regulators: 5V and 3.3V
+ - multiple of each for temperature management
+ - calculate power consumption
+ - Use diodes for feedback / reverse polarity
+ - 100uF or less caps close to ICs (decoupling caps)
+ - USBC for power?
+ - 0.5 for power traces
+ - 0.3 for everything else
+
+LED driver
+ - 1 resistor controls voltage to all LEDs
+
+Use different switch for power toggle (keyboard switch won't work)
