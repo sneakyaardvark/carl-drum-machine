@@ -7,7 +7,7 @@ class CarlI2C {
     private:
 
     public:
-        void wireDrive();
+        void wireInit();
         // Wire.begin()
 
         void screenInit();

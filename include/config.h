@@ -11,7 +11,16 @@
 
 #define I2C_SDA 21
 #define I2C_SCL 22
+#define SPI_XXX 00
 
 #define DEFAULT_BAUD 115200
+
+#define DEFAULT_GPIO_ADDR
+#define DEFAULT_LCD_ADDR
+
+#define DEFAULT_LED_ADDR
+
+#define LCD_ROWS 4
+#define LCD_COLS 20
 
 #endif // !H_CARL_CONFIG

@@ -10,15 +10,13 @@ struct carl {
 
 struct carl CARL;
 
-void setup() {
-//test modes:
-//	0 - bare GPIO hardware testing - switches, pots
-//		  connected directly to device
-//	1 - signal component testing - LED, LCD, (SD) 
-//		  devices all connected, testing modularly or in sequence
-//	2 - audio signal component testing
-//		  speaker/speaker amp testing with signal sweep, pwm variation signal
+//operating modes
+//	0 - primary operating mode (BEAT MACHINE)
+//		  boot process > looping sound playback logic
+//	1 - debug mode - troubleshooting
+//		  side-loaded boot > looping helloworld/component diagnostics
 
+void setup() {
 }
 
 void loop() {
