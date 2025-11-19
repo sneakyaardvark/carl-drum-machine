@@ -1,4 +1,4 @@
-/** 
+/*
  * parts of this file are derived from https://github.com/atomic14/esp-asteroids
  * Under the Unlicense
  */
@@ -6,19 +6,26 @@
 #include <HardwareSerial.h>
 #include <FS.h>
 #include <SPIFFS.h>
+#include <errno.h>
+#include <string.h>
 #include <stdlib.h>
 #include "WAVHeader.h"
-#include <esp_log.h>
+#include "esp_err.h"
+#include "i2s_def.h"
+
+static const char *TAG = "WAV";
 
 static bool is_header_valid(wav_header_t* header);
 
 WAVFile::WAVFile(const char* filename, size_t frame_size) {
+  esp_log_level_set(TAG, ESP_LOG_INFO);
   number_samples = 0;
+  cached_sample_offset = 0;
   samples = NULL;
   fs::FS fs = SPIFFS;
-  File file = fs.open(filename);
+  file = fs.open(filename);
   if (!file) {
-    // failed to open
+    ESP_LOGE(TAG, "failed to open file");
     return;
   }
 
@@ -29,48 +36,49 @@ WAVFile::WAVFile(const char* filename, size_t frame_size) {
     Serial.println("Error: invlaid WAV header");
   }
   else {
-    // number_samples = header.data_bytes / (header.bit_depth / 8);
-    number_samples = header.data_bytes / sizeof(int16_t);
-    samples = (int16_t *)malloc(header.data_bytes);
-    size_t bytes_read = file.read((uint8_t *)samples, header.data_bytes);
+    total_number_samples = header.data_bytes / sizeof(i2s_sample_t);
+    ESP_LOGE(TAG, "total samples = %u", total_number_samples);
 
-    if (bytes_read != header.data_bytes) {
-      Serial.print("read bytes: ");
-      Serial.println(bytes_read);
-      Serial.print("total data bytes: ");
-      Serial.println(header.data_bytes);
-      Serial.println("Error: did not read all samples");
-    }
+    samples = (i2s_sample_t *)malloc(sizeof(i2s_sample_t) * SAMPLE_FRAME_COUNT);
+    // load the first frames of samples
+    fetch_samples();
   }
-
-  file.close();
 }
 
-int32_t WAVFile::get_number_samples() {
+uint32_t WAVFile::get_number_samples(void) {
   return number_samples;
 }
 
-int16_t WAVFile::get_sample(uint32_t position) {
-  return samples[position];
+uint32_t WAVFile::get_total_number_samples(void) {
+  return total_number_samples;
 }
-union byte_to_u16 {
-  struct double_byte {
-    uint8_t byte0;
-    uint8_t byte1;
-  } bytes;
-  int16_t u16;
-};
 
-// int16_t WAVFile::get_sample2(uint32_t position) {
-//   return samples[position];
-//   position *= 2;
-//   return (samples[position] << 8) | samples[position + 1];
-//   // return ((int16_t *) samples)[position];
-//   union byte_to_u16 test = {
-//     { samples[position], samples[position + 1] }
-//   };
-//   return test.u16;
-// }
+i2s_sample_t WAVFile::get_sample(uint32_t position) {
+  ESP_LOGI(TAG, "getting sample @ %u", position);
+  ESP_LOGI(TAG, "cached offset = %u", cached_sample_offset);
+  if (position >= cached_sample_offset) {
+    fetch_samples();
+  }
+  return samples[position % cached_sample_offset];
+}
+
+void WAVFile::fetch_samples(void) {
+  ESP_LOGI(TAG, "available bytes:%d", file.available());
+  size_t bytes_read = file.read((uint8_t *)samples, sizeof(i2s_sample_t) * SAMPLE_FRAME_COUNT);
+  if (bytes_read != sizeof(i2s_sample_t) * SAMPLE_FRAME_COUNT) {
+    char buf[64];
+    strerror_r(errno, buf, sizeof(buf));
+    // esp_err_to_name_r(errno, buf, sizeof(buf));
+    ESP_LOGE(TAG, "fetch read error: %s", buf);
+  }
+  number_samples = bytes_read / sizeof(i2s_sample_t);
+  if (number_samples != SAMPLE_FRAME_COUNT) {
+    ESP_LOGE(TAG, "number of samples fetched != SAMPLE_FRAME_COUNT (%u != %u)", number_samples, SAMPLE_FRAME_COUNT);
+  }
+  ESP_LOGI(TAG, "fetched %u samples in %u bytes", number_samples, bytes_read);
+  cached_sample_offset += number_samples;
+  ESP_LOGI(TAG, "cache offset=%u", cached_sample_offset);
+}
 
 static bool is_header_valid(wav_header_t* header) {
   if (header->bit_depth != 16) {
@@ -89,4 +97,11 @@ static bool is_header_valid(wav_header_t* header) {
 
 WAVFile::~WAVFile() {
   free(samples);
+  file.close();
+}
+
+void WAVFile::reset(void) {
+  file.seek(sizeof(wav_header_t), SeekSet);
+  cached_sample_offset = 0;
+  fetch_samples();
 }

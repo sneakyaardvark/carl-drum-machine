@@ -6,6 +6,7 @@
 #include "esp_log.h"
 #include "esp_log_level.h"
 #include "freertos/idf_additions.h"
+#include <esp_log.h>
 #include <math.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -15,8 +16,8 @@
 static const char *TAG = "I2S";
 
 typedef struct i2s_frame {
-  int16_t left;
-  int16_t right;
+  i2s_sample_t left;
+  i2s_sample_t right;
 } frame_t;
 
 void I2SWriterTask(void* param) {
@@ -25,8 +26,7 @@ void I2SWriterTask(void* param) {
   volatile int buffer_position = 0;
   frame_t* frames = (frame_t*)malloc(sizeof(frame_t) * NUM_FRAMES_TO_SEND);
   if (frames == NULL) {
-    ESP_LOGE(TAG, "Unable to allocate frames ptr");
-    
+    ESP_LOGE(TAG, "unable to allocate frames ptr");
   }
   while (true)
   {
@@ -38,21 +38,20 @@ void I2SWriterTask(void* param) {
           for (int i = 0; i < NUM_FRAMES_TO_SEND; i++) {
             float sample = 0;
             for (auto &voice : output->voices) {
-              if (voice.play_position < voice.src->get_number_samples()) {
+              if (voice.play_position < voice.src->get_total_number_samples()) {
                 // sample += voice.volume * (voice.src->get_sample(voice.play_position) - 128.0f) / 128.0f;
                 // sample += voice.volume * (voice.src->get_sample(voice.play_position) - INT16_MAX) / INT16_MAX;
-                sample += (voice.volume * voice.src->get_sample(voice.play_position)) / INT16_MAX;
+                sample += (voice.volume * voice.src->get_sample(voice.play_position)) / I2S_SAMPLE_MAX;
                 voice.play_position += 1;
-                // ESP_LOGE(TAG, "play_position: %u", voice.play_position);
               } else {
-                ESP_LOGI(TAG, "voice finished playing");
+                ESP_LOGE(TAG, "voice finished playing");
               }
             }
             // apply clipping
             sample = tanhf(sample);
             // output it
             // frames[i].left = frames[i].right = sample * (INT16_MAX / 2) - 1;
-            frames[i].left = frames[i].right = sample * INT16_MAX;
+            frames[i].left = frames[i].right = sample * I2S_SAMPLE_MAX;
             // frames[i].left = sample * 16383; // multiply to get a reasonable sample value out of the ratio
             // frames[i].right = sample * 16383;
           }
@@ -69,7 +68,7 @@ void I2SWriterTask(void* param) {
           bytesWritten = output->I2S.write(buffer_position + (uint8_t*)frames, availableBytes);
           availableBytes -= bytesWritten;
           buffer_position += bytesWritten;
-
+          ESP_LOGD(TAG, "sent %u bytes", bytesWritten);
         }
       } while (bytesWritten > 0);
     }
@@ -77,15 +76,15 @@ void I2SWriterTask(void* param) {
 }
 
 void I2SOutput::begin() {
-  esp_log_level_set(TAG, ESP_LOG_DEBUG);
+  esp_log_level_set(TAG, ESP_LOG_ERROR);
   I2S.setPins(I2S_BCLK, I2S_LRCLK, I2S_DOUT);
   I2S.begin(I2S_MODE_STD, I2S_SAMPLE_RATE, I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_STEREO);
   
   xTaskCreatePinnedToCore(I2SWriterTask, "i2s_writer", 4096, this, 2, &i2sWriterTask, 1);
 }
 
-void I2SOutput::add(WAVFile* file, float volume) {
-  ESP_LOGD(TAG, "Adding wav file");
+void I2SOutput::add(WAVFile *file, float volume) {
+  ESP_LOGI(TAG, "Adding wav file to voices");
   for (auto &voice : voices) {
     if (voice.play_position == voice.src->get_number_samples())
     {
