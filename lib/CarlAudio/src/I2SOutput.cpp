@@ -3,12 +3,16 @@
  * Under the Unlicense
  */
 #include "I2SOutput.hpp"
+#include "esp_log.h"
+#include "esp_log_level.h"
 #include "freertos/idf_additions.h"
 #include <math.h>
 #include <stdint.h>
 #include <stdlib.h>
 
 #define NUM_FRAMES_TO_SEND 64
+
+static const char *TAG = "I2S";
 
 typedef struct i2s_frame {
   int16_t left;
@@ -20,6 +24,10 @@ void I2SWriterTask(void* param) {
   volatile int availableBytes = 0;
   volatile int buffer_position = 0;
   frame_t* frames = (frame_t*)malloc(sizeof(frame_t) * NUM_FRAMES_TO_SEND);
+  if (frames == NULL) {
+    ESP_LOGE(TAG, "Unable to allocate frames ptr");
+    
+  }
   while (true)
   {
     if (1 /* TODO: check if we should be playing back */) {
@@ -35,6 +43,9 @@ void I2SWriterTask(void* param) {
                 // sample += voice.volume * (voice.src->get_sample(voice.play_position) - INT16_MAX) / INT16_MAX;
                 sample += (voice.volume * voice.src->get_sample(voice.play_position)) / INT16_MAX;
                 voice.play_position += 1;
+                // ESP_LOGE(TAG, "play_position: %u", voice.play_position);
+              } else {
+                ESP_LOGI(TAG, "voice finished playing");
               }
             }
             // apply clipping
@@ -66,6 +77,7 @@ void I2SWriterTask(void* param) {
 }
 
 void I2SOutput::begin() {
+  esp_log_level_set(TAG, ESP_LOG_DEBUG);
   I2S.setPins(I2S_BCLK, I2S_LRCLK, I2S_DOUT);
   I2S.begin(I2S_MODE_STD, I2S_SAMPLE_RATE, I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_STEREO);
   
@@ -73,6 +85,7 @@ void I2SOutput::begin() {
 }
 
 void I2SOutput::add(WAVFile* file, float volume) {
+  ESP_LOGD(TAG, "Adding wav file");
   for (auto &voice : voices) {
     if (voice.play_position == voice.src->get_number_samples())
     {
