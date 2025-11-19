@@ -1,4 +1,5 @@
 #include "CarlI2C.hpp"
+#include "CarlI2C_LCDPatterns.hpp"
 #include <stdint.h>
 #include <stdlib.h>
 #include <Wire.h>
@@ -6,23 +7,22 @@
 
 static bool serialOut = false;
 
-void wireInit(){
+void CarlI2C::wireInit(){
     Wire.begin();
 }
     
-void serialInit(){
+void CarlI2C::serialInit(){
     Serial.begin(DEFAULT_BAUD);
     serialOut = true;
 }
 
-void screenInit(){
+void CarlI2C::screenInit(){
 
 }
     // init screen
 
-void addressScan(){
+void CarlI2C::addressScan(){
     byte address, error;
-    byte[] devices
     int numDevices;
 
     serialOut ? Serial.println("scanning for devices");
@@ -42,21 +42,21 @@ void addressScan(){
             serialOut ? Serial.println(address, HEX);
         }
     
-        if(numDevices==0){}
-        else(){}
+        if(numDevices==0){
+            serialOut ? Serial.println("ERROR: no devices found.");
+        }
+        else(){
+            //check addesses against defaults
+        }
     }
-
-
 }
-    // scans/checks addresses of devices
 
-void IOState(){
-
+void CarlI2C::IOState(){
 }
     // reads GPIO state
 
-void screenTxt(){}
+void CarlI2C::screenTxt(){}
     // update text fields
 
-void screenGfx(){}
+void CarlI2C::screenGfx(){}
     // screen effects
