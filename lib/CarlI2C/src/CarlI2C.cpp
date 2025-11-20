@@ -3,9 +3,12 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <Wire.h>
-#include <LiquidCrystalI2C.h>
+#include <LiquidCrystal.h>  
+#include <Adafruit_MCP23X17.h>
 
 static bool serialOut = false;
+
+int[7] buttonPins = [0, 1, 2, 3, 4, 5, 6, 7];
 
 void CarlI2C::wireInit(){
     Wire.begin();
@@ -16,8 +19,19 @@ void CarlI2C::serialInit(){
     serialOut = true;
 }
 
-void CarlI2C::screenInit(){
+void CarlI2C::GPIOInit(Adafruit_MCP23X17 dev){
+    if(!dev.begin_I2C()){
+        serialOut ? Serial.println("ERROR: GPIO Expander failed to initalize");
+    }
 
+    for(int i=0;i<len(buttonPins);i++){
+        dev.pinMode(buttonPins[i], INPUT_PULLUP);
+    }
+}
+
+void CarlI2C::screenInit(){
+    lcd.init();
+    lcd.backlight();
 }
     // init screen
 
@@ -51,12 +65,35 @@ void CarlI2C::addressScan(){
     }
 }
 
-void CarlI2C::IOState(){
+uint16_t CarlI2C::beatState(uint16_t* reg){
+    uint16_t bucket = reg;
+    for(int i=0;i<len(buttonPins);i++){
+        if(!dev.digitalRead(buttonPins[i])){
+            bucket += 2^(2 * i);
+            if(serialOut){
+                Serial.print("switch ");
+                Serial.print(i);
+                Serial.println(" pressed");
+            }
+        }
+    }
+    reg = bucket;
 }
-    // reads GPIO state
+    // updates beat state
 
-void CarlI2C::screenTxt(){}
+void CarlI2C::screenTxt(LiquidCrystal_I2C lcd, String message){
+    lcd.setCursor(0,0);
+    lcd.print(karatL);
+    lcd.print(message);
+    lcd.print(karatR);
+    if(serialOut){
+        Serial.print("printed <");
+        Serial.print(message);
+        Serial.println("> to LCD");
+    }
+}
     // update text fields
 
-void CarlI2C::screenGfx(){}
+void CarlI2C::screenGfx(LiquidCrystal_I2C lcd){}
     // screen effects
+

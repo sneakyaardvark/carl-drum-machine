@@ -10,6 +10,10 @@ struct carl {
 
 struct carl CARL;
 
+LiquidCrystal_I2C lcd(LCD_ADDR, LCD_COLS, LCD_ROWS);
+
+Adafruit_MCP23X17 dev;
+
 //operating modes
 //	0 - primary operating mode (BEAT MACHINE)
 //		  boot process > looping sound playback logic

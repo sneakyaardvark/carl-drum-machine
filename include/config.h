@@ -16,8 +16,8 @@
 #define DEFAULT_BAUD 115200
 #define MAX_DEVICES 4
 
-#define DEFAULT_GPIO_ADDR
-#define DEFAULT_LCD_ADDR
+#define GPIO_ADDR
+#define LCD_ADDR
 
 #define DEFAULT_LED_ADDR
 

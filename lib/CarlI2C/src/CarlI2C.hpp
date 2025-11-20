@@ -10,6 +10,8 @@ class CarlI2C {
         void wireInit();
         // Wire.begin()
 
+        void GPIOInit();
+
         void screenInit();
         // lcd.init()
         // variables that are needed quickly
@@ -17,30 +19,12 @@ class CarlI2C {
 
 
         void addressScan();
-            // init wire, serial
-            // looping
-            //      byte error, address
-            //      byte[] devices
-            //      iterator i    
-            //      for(address=1;address<127;address++)
-            //          Wire.beginTransmission(address)
-            //          error = Wire.endTransmission(address)
-            //          if(!error)
-            //              on line at address
-            //              update devices[i] = address
-            //          elseif(error==4)
-            //              unknown device at address
-            //     report devices by name?, address
 
-
-        void IOState();
+        uint16_t beatState();
         //ll
         // uses a pointer to avoid changing that data directly
         //      have some control signal array var local to main or smth
         // init i2c wire vars
-        //      maybe actually not
-        // init virtual space for iostates?
-        //      whats gonna be fast access wise
         // data read call
         //      quick valid check
         //      map to virtual space
