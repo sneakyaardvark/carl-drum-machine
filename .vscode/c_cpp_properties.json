@@ -1,3 +1,8 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
 {
     "configurations": [
         {
@@ -6,8 +11,11 @@
                 "c:/Users/ugly/Documents/GitHub/carl-drum-machine/include",
                 "c:/Users/ugly/Documents/GitHub/carl-drum-machine/src",
                 "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/BeatPattern/src",
-                "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/HardwareTest",
-                "C:\\Users\\ugly\\AppData\\Local\\Arduino15\\**"
+                "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/CarlI2C/src",
+                "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/CarlSerial/src",
+                "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/modeDebug/src",
+                "c:/Users/ugly/Documents/GitHub/carl-drum-machine/.pio/libdeps/native/Unity/src",
+                ""
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
@@ -15,15 +23,18 @@
                     "c:/Users/ugly/Documents/GitHub/carl-drum-machine/include",
                     "c:/Users/ugly/Documents/GitHub/carl-drum-machine/src",
                     "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/BeatPattern/src",
-                    "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/HardwareTest",
+                    "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/CarlI2C/src",
+                    "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/CarlSerial/src",
+                    "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/modeDebug/src",
+                    "c:/Users/ugly/Documents/GitHub/carl-drum-machine/.pio/libdeps/native/Unity/src",
                     ""
                 ]
             },
             "defines": [
-                "PLATFORMIO=60118",
+                "PLATFORMIO=60119",
                 ""
             ],
-            "compilerPath": "C:/msys64/ucrt64/bin/gcc.exe",
+            "compilerPath": "gcc",
             "compilerArgs": [
                 ""
             ]
