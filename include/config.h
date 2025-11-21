@@ -9,15 +9,16 @@
 #define NUM_SWITCHTEST 8
 #define NUM_POTTEST 4
 
-#define I2C_SDA 21
+#define I2C_SDA 23
 #define I2C_SCL 22
-#define SPI_XXX 00
-
+#define SPI_DATA 17
+#define SPI_CL 4
+#define SPI_LAT 21
 #define DEFAULT_BAUD 115200
 #define MAX_DEVICES 4
 
-#define GPIO_ADDR
-#define LCD_ADDR
+#define GPIO_ADDR 0x27
+#define LCD_ADDR 0x30
 
 #define DEFAULT_LED_ADDR
 

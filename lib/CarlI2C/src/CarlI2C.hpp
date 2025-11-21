@@ -7,20 +7,21 @@ class CarlI2C {
     private:
 
     public:
-        void wireInit();
+        void wireStart();
         // Wire.begin()
 
-        void GPIOInit();
-
-        void screenInit();
+        void serialOut();
         // lcd.init()
         // variables that are needed quickly
         //      probably good at top 
 
+        void GPIOInit();
+
+        void screenInit(LiquidCrystal_I2C lcd);
 
         void addressScan();
 
-        uint16_t beatState();
+        uint16_t beatState(Adafruit_MCP23X17 dev, uint16_t* reg);
         //ll
         // uses a pointer to avoid changing that data directly
         //      have some control signal array var local to main or smth
@@ -29,14 +30,16 @@ class CarlI2C {
         //      quick valid check
         //      map to virtual space
 
-        
-        void screenTxt();
+        void GPIOInterrupt(Adafruit_MCP23X17 dev);
+
+        void voiceText(LiquidCrystal_I2C lcd, String message);
         // only called when text fields update
         //      in this case only the name of the voice
 
-        void screenGfx();
+        void ArbitraryPrint(LiquidCrystal_I2C lcd, int col, int row, String message);
         // screen effects for patch selection, blinking indicator
 
+        void screenGfx(LiquidCrystal_I2C lcd);
 }
 // input parser from gpio module
 
