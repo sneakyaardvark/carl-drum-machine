@@ -5,21 +5,22 @@
 // prelim: check i2c address
 class CarlI2C {
     private:
+        void I2CDeviceBuild(I2CDevice[MAX_DEVICES] devices, String tag, int idx, byte addr, bool busM);
 
     public:
         void wireStart();
         // Wire.begin()
 
-        void serialOut();
+        void serialOut(bool case);
         // lcd.init()
         // variables that are needed quickly
         //      probably good at top 
 
-        void GPIOInit();
+        void GPIOInit(Adafruit_MCP23X17 dev);
 
         void screenInit(LiquidCrystal_I2C lcd);
 
-        void addressScan();
+        void addressScan(I2CDevice[MAX_DEVICES]* devices);
 
         uint16_t beatState(Adafruit_MCP23X17 dev, uint16_t* reg);
         //ll
@@ -36,10 +37,10 @@ class CarlI2C {
         // only called when text fields update
         //      in this case only the name of the voice
 
-        void ArbitraryPrint(LiquidCrystal_I2C lcd, int col, int row, String message);
+        void arbitraryPrint(LiquidCrystal_I2C lcd, int col, int row, String message);
         // screen effects for patch selection, blinking indicator
 
-        void screenGfx(LiquidCrystal_I2C lcd);
+        void screenGfx(LiquidCrystal_I2C lcd, charLCD token);
 }
 // input parser from gpio module
 

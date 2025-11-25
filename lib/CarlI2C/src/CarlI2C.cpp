@@ -8,10 +8,12 @@
 
 static bool serialOut = false;
 
+// device id index struct
 struct I2CDevice {
-    string name;
+    String name;
     int index;
     byte address;
+    bool busMember;
 }
 // pins for button inputs - values are GPIO pins 
 int[7] buttonPins = [0, 1, 2, 3, 4, 5, 6, 7];
@@ -21,20 +23,19 @@ void CarlI2C::wireStart(){
     Wire.begin();
 }
 
-// initializes and enables serial communication
+// enables or disables serial output communications
 void CarlI2C::serialOut(bool case){
     serialOut = case;
-    (serialOut)? Serial.begin(DEFAULT_BAUD) : Serial.end;
-    
+    serialOut = (true) ? Serial.begin(DEFAULT_BAUD) : Serial.end();
 }
 
 // initialization for GPIO module
 void CarlI2C::GPIOInit(Adafruit_MCP23X17 dev){
-    if(!dev.begin_I2C()){
-        serialOut ? Serial.println("ERROR: GPIO Expander failed to initalize");
+    if(!dev.begin_I2C()){ //nonstarter error checking
+        serialOut = (true) ? Serial.println("ERROR: GPIO Expander failed to initalize");
     }
 
-    for(int i=0;i<len(buttonPins);i++){
+    for(int i=0;i<len(buttonPins);i++){ //enable input button pins with internal pullup
         dev.pinMode(buttonPins[i], INPUT_PULLUP);
     }
 }
@@ -45,34 +46,58 @@ void CarlI2C::screenInit(LiquidCrystal_I2C lcd){
     lcd.backlight();
 }
 
-// 
-void CarlI2C::addressScan(){
+// builder command for I2CDevice array
+void CarlI2C::I2CDeviceBuild(I2CDevice[MAX_DEVICES] devices, String tag, int idx, byte addr, bool busM){
+    devices.name = tag;
+    devices.index = idx;
+    devices.address = addr;
+    devices.busMember = busM;
+}
+
+// scans I2C bus for devices, catalogues them
+void CarlI2C::addressScan(I2CDevice[MAX_DEVICES]* devices){
     byte address, error;
     int numDevices;
 
-    serialOut ? Serial.println("scanning for devices");
+    //serial communications
+    serialOut = (true) ? Serial.println("scanning for devices");
 
     for (address = 1; address < 128; address++){
+        String deviceName;
+        bool busMember;
+
         Wire.beginTransmission(address);
         error = Wire.endTransmission();
 
-        if(!error){
-            serialOut ? Serial.println("device found at 0x");
-            serialOut ? Serial.println(address, HEX);
-            numDevices++;
-        }
+        switch(error){
+            case 0: // add recognized devices to device id index
+                address = (GPIO_ADDR) ? deviceName = "GPIO";
+                address = (LCD_ADDR) ? deviceName = "LCD";
+                deviceName = "ARB";
+                busMember = true; 
 
-        elif(error==4){
-            serialOut ? Serial.println("unknown device at 0x");
-            serialOut ? Serial.println(address, HEX);
+                I2cDeviceBuild(devices, deviceName, numDevices, address, busMember);
+                break;
+            
+            case 4:
+                deviceName = "UNK";
+                busMember = false;
+
+                I2cDeviceBuild(devices, deviceName, numDevices, address, busMember);
+                break;
+
+            default:
+                serialOut = (true) ? Serial.print("ERROR: unknown I2C Bus error [");
+                serialOut = (true) ? Serial.print(error);
+                serialOut = (true) ? Serial.println("]");
+                break;
+
+        
         }
-    
-        if(numDevices==0){
-            serialOut ? Serial.println("ERROR: no devices found.");
-        }
-        else(){
-            //check addesses against defaults
-        }
+        numDevices++;
+    }
+    if(numDevices = 0){
+        serialOut = (true) ? Serial.println("ERROR: No I2C devices registered.");
     }
 }
 
@@ -89,12 +114,15 @@ uint16_t CarlI2C::beatState(Adafruit_MCP23X17 dev, uint16_t* reg){
             }
         }
     }
+
     reg = bucket;
+    //return bucket;
 }
 
+//todo
 void CarlI2C::GPIOInterrupt(Adafruit_MCP23X17 dev){}
 
-// makes / updates top line of LCD (text line)
+// updates voice text of LCD (top text line)
 void CarlI2C::voiceText(LiquidCrystal_I2C lcd, String message){
     lcd.setCursor(0,0);
     lcd.print(karatL);
@@ -107,6 +135,7 @@ void CarlI2C::voiceText(LiquidCrystal_I2C lcd, String message){
     }
 }
 
+// arbitrary text update for screen          
 void CarlI2C::arbitraryPrint(LiquidCrystal_I2C lcd, int col, int row, String message){
     lcd.setCursor(col, row);
     lcd.print(message);
@@ -116,6 +145,8 @@ void CarlI2C::arbitraryPrint(LiquidCrystal_I2C lcd, int col, int row, String mes
         Serial.println("> to LCD");
     }
 }
+
 // draw/update screen graphical effects
-void CarlI2C::screenGfx(LiquidCrystal_I2C lcd){}
+// todo
+void CarlI2C::screenGfx(LiquidCrystal_I2C lcd, charLCD token){}
 
