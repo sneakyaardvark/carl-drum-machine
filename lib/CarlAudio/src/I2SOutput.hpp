@@ -15,7 +15,6 @@
 #include <ESP_I2S.h>
 #include <freertos/task.h>
 #include <freertos/queue.h>
-#include <list>
 #include <stdint.h>
 #include "WAVFile.hpp"
 
@@ -25,8 +24,9 @@
  */
 typedef struct voice_t {
   WAVFile *src; /**< the WAV file corresponding to this sample */
+  bool play;
+  SemaphoreHandle_t xMutex;
   volatile uint32_t play_position; /**< the play position of this sample */
-  float volume; /**< the volume of this sample */
 } Voice_t;
 
 /**
@@ -35,19 +35,16 @@ typedef struct voice_t {
 class I2SOutput {
   private:
     TaskHandle_t i2sWriterTask;
-    std::list<Voice_t> voices;
+    Voice_t voices[4];
     I2SClass I2S;
   public:
+    volatile bool enabled;
     /** 
      * @brief Initialize the I2S output for operation
      */
     void begin();
-    /**
-     * @brief Add a file to send out over I2S
-     * @param file the WAV to add
-     * @param volume the volume of the file
-     */
-    void add(WAVFile *file, float volume);
+    void play(uint8_t voice);
+    void setVoice(uint8_t num, WAVFile *file);
 
     friend void I2SWriterTask(void* param);
 };

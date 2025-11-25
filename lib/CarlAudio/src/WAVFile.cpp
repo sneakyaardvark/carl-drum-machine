@@ -54,8 +54,8 @@ uint32_t WAVFile::get_total_number_samples(void) {
 }
 
 i2s_sample_t WAVFile::get_sample(uint32_t position) {
-  ESP_LOGI(TAG, "getting sample @ %u", position);
-  ESP_LOGI(TAG, "cached offset = %u", cached_sample_offset);
+  ESP_LOGV(TAG, "getting sample @ %u", position);
+  ESP_LOGV(TAG, "cached offset = %u", cached_sample_offset);
   if (position >= cached_sample_offset) {
     fetch_samples();
   }

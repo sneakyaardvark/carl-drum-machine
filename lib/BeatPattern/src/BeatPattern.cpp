@@ -1,6 +1,7 @@
 #include "BeatPattern.hpp"
 #include <stdint.h>
 
+BeatPattern::BeatPattern() { }
 
 void BeatPattern::cycleBeat(beat_pattern* beat, uint8_t position) {
   beat_pattern mask = 3 << (2 * position); // 0b11 in the position of the note
