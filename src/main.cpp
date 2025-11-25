@@ -31,7 +31,7 @@ Adafruit_MCP23X17 dev;
 #define PWM 2048
 
 #define channels 17
-#define light 255
+#define light 100
 
 #define wait 200
 
@@ -55,6 +55,8 @@ void loop() {
   tlc.write();
   delay(5000);
 }
+void writeConfigLED(uint8_t state){}
+void writeBeatLED(uint16_t state){}
   /*
   for(int i=0;i<=channels;i++){
     if(i>0){
