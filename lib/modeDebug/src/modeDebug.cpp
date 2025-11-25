@@ -1,15 +1,15 @@
 #include <stdlib.h>
-#include "HardwareTest.hpp"
+#include "modeDebug.hpp"
 #include <CarlI2C.cpp>
 #include "CarlI2C.hpp"
 
-void HardwareTest::Switches(){}
-void HardwareTest::Potentiometers(){}
+void modeDebug::Switches(){}
+void modeDebug::Potentiometers(){}
 
-void HardwareTest::LCD(){}
+void modeDebug::LCD(){}
 
-void HardwareTest::LEDController(){}
+void modeDebug::LEDController(){}
 
-void HardwareTest::AudioOut(){}
+void modeDebug::AudioOut(){}
 
-void HardwareTest::Power(){}
+void modeDebug::Power(){}

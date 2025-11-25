@@ -2,7 +2,7 @@
 #define H_CARL_HARDWARE_TEST
 #include <stdint.h>
 
-class HardwareTest {
+class modeDebug {
   //private:
   public:
     void Switches();
@@ -10,8 +10,6 @@ class HardwareTest {
 
     void LCD();
     void LEDController();
-    void SDReader();
-        //presently unused, commented out in HardwareTest.cpp
 
     void AudioOut();
 
