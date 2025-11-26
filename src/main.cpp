@@ -15,62 +15,43 @@ struct carl CARL;
 LiquidCrystal_I2C lcd(LCD_ADDR, LCD_COLS, LCD_ROWS);
 
 Adafruit_MCP23X17 dev;
-
-//operating modes
-//	0 - primary operating mode (BEAT MACHINE)
-//		  boot process > looping sound playback logic
-//	1 - debug mode - troubleshooting
-//		  side-loaded boot > looping helloworld/component diagnostics
 */
 
-#define num_devices 1
-#define data 17
-#define clock 4
-#define latch 21
+#define light 4095
+#define numDevices 1
+#define wait 5000
 
-#define PWM 2048
-
-#define channels 17
-#define light 100
-
-#define wait 200
-
-Adafruit_TLC5947 tlc = Adafruit_TLC5947(num_devices, clock, latch, data);
+Adafruit_TLC5947 tlc = Adafruit_TLC5947(numDevices, SPI_CL, SPI_LAT, SPI_DATA);
 
 void setup() {
   Serial.begin(DEFAULT_BAUD);
 
   Serial.println("LED Array test");
 
-  if(!tlc.begin()){
+  bool state = tlc.begin();
+  uint16_t tester = tlc.getPWM(0);
+  Serial.println(state);
+  Serial.println(tester);
+  if(!state){
     Serial.println("ERROR: TLC5947 initialization failed.");
+  } else {
+    Serial.println("TLC init suceeded, goto loop.");
   }
 }
 
 void loop() {
-  tlc.setLED(0, light, light, light);
+  uint16_t tester;
+  Serial.println("top");
+  tlc.setPWM(0, light);
   tlc.write();
-  delay(5000);
-  tlc.setLED(0, 0,0,0);
+  tester = tlc.getPWM(0);
+  Serial.println(tester);
+  delay(wait);
+  Serial.println("blink");
+  tlc.setPWM(0, 0);
   tlc.write();
-  delay(5000);
+  tester = tlc.getPWM(0);
+  Serial.println(tester);
+  delay(wait);
 }
-void writeConfigLED(uint8_t state){}
-void writeBeatLED(uint16_t state){}
-  /*
-  for(int i=0;i<=channels;i++){
-    if(i>0){
-      tlc.setLED((i-1), 0, 0, 0);
-      tlc.write();
-      delay(wait);
-    }else{
-      tlc.setLED(17, 0, 0, 0);
-      tlc.write();
-      delay(wait);
-    }
-    tlc.setLED(i, light, light, light);
-    tlc.write();
-    delay(wait);
-  */
-  
 
