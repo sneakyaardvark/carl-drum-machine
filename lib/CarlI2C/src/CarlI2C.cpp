@@ -1,5 +1,6 @@
 #include "CarlI2C.hpp"
 #include "CarlI2C_LCDPatterns.hpp"
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <Wire.h>
@@ -15,6 +16,7 @@ struct I2CDevice {
     byte address;
     bool busMember;
 }
+
 // pins for button inputs - values are GPIO pins 
 int[7] buttonPins = [0, 1, 2, 3, 4, 5, 6, 7];
 
@@ -101,7 +103,7 @@ void CarlI2C::addressScan(I2CDevice[MAX_DEVICES]* devices){
     }
 }
 
-// updates 16bit number representing beat state 
+// updates 16bit number representing beat state based on check loop 
 uint16_t CarlI2C::beatState(Adafruit_MCP23X17 dev, uint16_t* reg){
     uint16_t bucket = reg;
     for(int i=0;i<len(buttonPins);i++){
@@ -119,6 +121,11 @@ uint16_t CarlI2C::beatState(Adafruit_MCP23X17 dev, uint16_t* reg){
     //return bucket;
 }
 
+// beatState driven by value representing switch pressed
+// todo <future predicting>
+//uint16_t CarlI2C::beatDrive(Adafruit_MCP23X17 dev, uint16_t* reg, [uint8_t/int] switch){}
+
+//handler for GPIO interrupt routine
 //todo
 void CarlI2C::GPIOInterrupt(Adafruit_MCP23X17 dev){}
 

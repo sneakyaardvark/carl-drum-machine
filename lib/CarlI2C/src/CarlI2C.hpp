@@ -1,6 +1,10 @@
+#include "CarlI2C_LCDPatterns.hpp"
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <Wire.h>
+#include <LiquidCrystal.h>  
+#include <Adafruit_MCP23X17.h>
 
 // prelim: check i2c address
 class CarlI2C {
