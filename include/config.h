@@ -11,9 +11,13 @@
 
 #define I2C_SDA 23
 #define I2C_SCL 22
+
 #define SPI_DATA 17
 #define SPI_CL 4
 #define SPI_LAT 21
+#define SPI_PWM 2048
+#define SPI_CHANNELS 17
+
 #define DEFAULT_BAUD 115200
 #define MAX_DEVICES 4
 
