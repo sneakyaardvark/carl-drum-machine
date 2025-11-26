@@ -1,6 +1,8 @@
 
 #include <Arduino.h>
-#include <unity.h>
+#include <SPIFFS.h>
+#include <I2SOutput.hpp>
+#include <WAVFile.hpp>
 
 I2SOutput *output;
 WAVFile *file;
@@ -24,4 +26,6 @@ void setup() {
   output->add(file, 1.0f);
 }
 
-void loop() {}
+void loop() {
+  delay(1);
+}
