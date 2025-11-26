@@ -24,7 +24,6 @@ void CarlPlayback::playVoice(uint8_t voice) {
 }
 
 void CarlPlayback::play() {
-  ESP_LOGE(TAG, "pb.play()");
   i2s.enabled = true;
   uClock.start();
 }
