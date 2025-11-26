@@ -31,7 +31,6 @@ void I2SWriterTask(void* param) {
   while (true)
   {
     if (output->enabled) {
-      ESP_LOGE(TAG, "I2S enabled");
       size_t bytesWritten = 0;
       do {
         // buffer has been sent -- create a new one
@@ -40,8 +39,10 @@ void I2SWriterTask(void* param) {
             float sample = 0;
             for (auto &voice : output->voices) {
               if (xSemaphoreTake(voice.xMutex, portMAX_DELAY) == pdTRUE) {
+                ESP_LOGD(TAG, "play=%u;pp=%u;ttl_s=%u", voice.play, voice.play_position, voice.src->get_total_number_samples());
                 if (voice.play && voice.play_position < voice.src->get_total_number_samples()) {
-                  sample += (voice.src->get_sample(voice.play_position)) / I2S_SAMPLE_MAX;
+                  sample += (float)(voice.src->get_sample(voice.play_position)) / I2S_SAMPLE_MAX;
+                  ESP_LOGD(TAG, "add=%u", voice.src->get_sample(voice.play_position));
                   voice.play_position += 1;
                 } else {
                   ESP_LOGD(TAG, "voice finished playing");
@@ -52,6 +53,8 @@ void I2SWriterTask(void* param) {
             }
             // apply clipping
             sample = tanhf(sample);
+            ESP_LOGD(TAG, "sample=%f", sample * I2S_SAMPLE_MAX);
+
             // output it
             frames[i].left = frames[i].right = sample * I2S_SAMPLE_MAX;
           }
@@ -72,6 +75,9 @@ void I2SWriterTask(void* param) {
         }
       } while (bytesWritten > 0);
     } else {
+      // if (availableBytes != 0) {
+      //   availableBytes = 0;
+      // }
       vTaskDelay(1);
     }
   }
@@ -83,7 +89,6 @@ void I2SOutput::begin() {
   I2S.begin(I2S_MODE_STD, I2S_SAMPLE_RATE, I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_STEREO);
   
   xTaskCreatePinnedToCore(I2SWriterTask, "i2s_writer", 4096, this, 2, &i2sWriterTask, 1);
-  ESP_LOGE(TAG, "i2s begin");
 }
 
 void I2SOutput::setVoice(uint8_t num, WAVFile *file) {
