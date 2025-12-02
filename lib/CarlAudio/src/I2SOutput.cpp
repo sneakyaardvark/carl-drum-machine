@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define NUM_FRAMES_TO_SEND 64
+#define NUM_FRAMES_TO_SEND 256
 
 static const char *TAG = "I2S";
 
