@@ -1,6 +1,5 @@
 #include <stdint.h>
 #include <stdlib.h>
-#include <bits.h>
 
 typedef unsigned long charLCD;
 
