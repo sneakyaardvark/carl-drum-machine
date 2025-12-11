@@ -8,42 +8,51 @@
 #include <Adafruit_MCP23X17.h>
 #include <Adafruit_TLC5947.h>
 
-struct carl {
-  uint8_t current_voice = 0;
-  //beat_pattern pattern_mtx[NUM_VOICES][NUM_PATTERNS];
-  uint8_t tempo = 120; 
-};
-
-struct carl CARL;
-
-struct I2CDevice* devices;
-
-LiquidCrystal* lcd();
-
-Adafruit_MCP23X17 dev;
-
 #define light 4095
 #define numDevices 1
 #define wait 5000
 
-Adafruit_TLC5947* tlc;
-tlc = Adafruit_TLC5947(numDevices, SPI_CL, SPI_LAT, SPI_DATA);
+Adafruit_MCP23X17 dev;
+
+Adafruit_TLC5947 tlc = Adafruit_TLC5947(numDevices, SPI_CL, SPI_LAT, SPI_DATA);
+
+struct I2CDevice* devices;
+
+uint8_t res = 11;
+uint8_t enab = 9;
+
+uint8_t d0 = 0;
+uint8_t d1 = 1;
+uint8_t d2 = 2;
+uint8_t d3 = 3;
+uint8_t d4 = 4;
+uint8_t d5 = 5;
+uint8_t d6 = 6;
+uint8_t d7 = 7;
+
+LiquidCrystal lcd(res, enab, d0, d1, d2, d3, d4, d5, d6, d7);
 
 void setup() {
-    //CarlI2C::wireStart();
     Wire.begin();
-    //CarlI2C::serialOut(true);
     Serial.begin(115200);
 
-    //CarlI2C::GPIOInit(dev);
-    //CarlI2C::screenInit(lcd);
-    CarlSerial::serialInit(tlc, "TLC5947 init sequence");
+    // gpio
+    if (!dev.begin_I2C()) {
+        Serial.println("Error.");
+        while (1);
+    }
 
-    CarlI2C::addressScan(devices);
+    dev.pinMode(0, INPUT);
+
+    // LCD
+    lcd.begin(16,4);
+
+    // LED
+    tlc.begin();
 }
 
 void loop() {
-/*  // LED test
+    // LED test
     uint16_t tester;
 
     Serial.println("top");
@@ -61,13 +70,31 @@ void loop() {
     tester = tlc.getPWM(0);
     Serial.println(tester);
     delay(wait);
-*/
+
 
     // GPIO test
-    //CarlI2C::inputParse();
+    int iterator = 8;
+    for(int i=0;i<iterator;i++){
+        if(!dev.digitalRead(i)){
+                
+            // interlock 
 
+            Serial.print("switch ");
+            Serial.print(i);
+            Serial.println(" pressed");
+            
+        }
+    }
+    
     // LCD test
-    CarlI2C::arbitraryPrint(&lcd, 0, 0, "Hello, World!");
-  
+    int col, row = 0;
+    String message = "Hello world!";
+    lcd.setCursor(col, row);
+    lcd.print(message);
+
+    Serial.print("printed <");
+    Serial.print(message);
+    Serial.println("> to LCD");
+
 }
 

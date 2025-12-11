@@ -1,6 +1,3 @@
-#ifndef H_CARL_CONFIG
-#define H_CARL_CONFIG
-
 #define CARL_FIRMWARE_VERSION "0"
 #define NUM_VOICES 4
 #define NUM_PATTERNS 4
@@ -28,5 +25,3 @@
 
 #define LCD_ROWS 4
 #define LCD_COLS 20
-
-#endif // !H_CARL_CONFIG
