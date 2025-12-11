@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include <Wire.h>
 #include <LiquidCrystal.h>  
 #include <Adafruit_MCP23X17.h>
@@ -11,7 +12,7 @@ enum I2CTag {GPIO, LCD, UNK} ;
 struct I2CDevice {
     String name;
     int index;
-    byte address;
+    int address;
     bool busMember;
 };
 
@@ -21,23 +22,22 @@ class CarlI2C {
         //void I2CDeviceBuild(I2CDevice devices[4], int idx, byte addr, bool busM);
 
     public:
-        void wireStart();
-        // Wire.begin()
-
-        void serialOut(bool caset);
+        //void wireStart();
+        
+        //void serialOut(bool caset);
         // lcd.init()
         // variables that are needed quickly
         //      probably good at top 
 
-        void GPIOInit(Adafruit_MCP23X17 &dev);
+        //void GPIOInit();
 
-        void screenInit(LiquidCrystal &lcd);
+        //void screenInit();
 
-        void addressScan(I2CDevice devices[4]);
+        I2CDevice addressScan();
 
-        void inputParse(Adafruit_MCP23X17 &dev);
+        void inputParse(Adafruit_MCP23X17& dev);
 
-        uint16_t beatState(Adafruit_MCP23X17 &dev, uint16_t* reg);
+        //uint16_t beatState(uint16_t* reg);
         //ll
         // uses a pointer to avoid changing that data directly
         //      have some control signal array var local to main or smth
@@ -46,16 +46,16 @@ class CarlI2C {
         //      quick valid check
         //      map to virtual space
 
-        void GPIOInterrupt(Adafruit_MCP23X17 &dev);
+        //void GPIOInterrupt();
 
-        void voiceText(LiquidCrystal &lcd, String message);
+        void voiceText(LiquidCrystal& lcd, String message);
         // only called when text fields update
         //      in this case only the name of the voice
 
-        void arbitraryPrint(LiquidCrystal &lcd, int col, int row, String message);
+        void arbitraryPrint(LiquidCrystal& lcd, int col, int row, String message);
         // screen effects for patch selection, blinking indicator
 
-        void screenGfx(LiquidCrystal &lcd, int token);
+        //void screenGfx(int token);
         
 };
 // input parser from gpio module
