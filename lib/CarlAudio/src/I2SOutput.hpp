@@ -24,7 +24,6 @@
  */
 typedef struct voice_t {
   WAVFile *src; /**< the WAV file corresponding to this sample */
-  volatile bool play;
   SemaphoreHandle_t xMutex;
   volatile uint32_t play_position; /**< the play position of this sample */
 } Voice_t;

@@ -38,22 +38,22 @@ void I2SWriterTask(void* param) {
           for (int i = 0; i < NUM_FRAMES_TO_SEND; i++) {
             float sample = 0;
             for (auto &voice : output->voices) {
-              if (xSemaphoreTake(voice.xMutex, portMAX_DELAY) == pdTRUE) {
                 ESP_LOGD(TAG, "play=%u;pp=%u;ttl_s=%u", voice.play, voice.play_position, voice.src->get_total_number_samples());
-                if (voice.play && voice.play_position < voice.src->get_total_number_samples()) {
+                if (voice.play_position < voice.src->get_total_number_samples()) {
                   sample += (float)(voice.src->get_sample(voice.play_position)) / I2S_SAMPLE_MAX;
                   ESP_LOGD(TAG, "add=%u", voice.src->get_sample(voice.play_position));
-                  voice.play_position += 1;
+                  if (xSemaphoreTake(voice.xMutex, portMAX_DELAY) == pdTRUE) {
+                    voice.play_position += 1;
+                    xSemaphoreGive(voice.xMutex);
+                  }
                 } else {
                   ESP_LOGD(TAG, "voice finished playing");
                 }
-                xSemaphoreGive(voice.xMutex);
-              }
               
             }
             // apply clipping
             sample = tanhf(sample);
-            ESP_LOGD(TAG, "sample=%f", sample * I2S_SAMPLE_MAX);
+            // ESP_LOGD(TAG, "sample=%f", sample * I2S_SAMPLE_MAX);
 
             // output it
             frames[i].left = frames[i].right = sample * I2S_SAMPLE_MAX;
@@ -95,19 +95,16 @@ void I2SOutput::setVoice(uint8_t num, WAVFile *file) {
   ESP_LOGE(TAG, "Setting voice %u", num);
   Voice_t v = {
     .src = file,
-    .play = false,
     .xMutex = xSemaphoreCreateMutex(),
-    .play_position = 0,
+    .play_position = file->get_total_number_samples(),
   };
   voices[num] = v;
 }
 
 void I2SOutput::play(uint8_t voice) {
-  if(xSemaphoreTake(voices[voice].xMutex, portMAX_DELAY) == pdTRUE) {
-    voices[voice].src->reset();
+  if (xSemaphoreTake(voices[voice].xMutex, portMAX_DELAY) == pdTRUE) {
     voices[voice].play_position = 0;
-    voices[voice].play = true;
     xSemaphoreGive(voices[voice].xMutex);
   }
-  ESP_LOGE(TAG, "voice %u play = %d", voice, voices[voice].play);
+  ESP_LOGE(TAG, "play voice %u", voice);
 }
