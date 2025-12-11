@@ -10,6 +10,7 @@
 
 typedef struct s_carl {
   uint8_t current_voice;
+  uint8_t playback_position;
   float tempo;
   BeatPattern patterns[4];
 } CARL;
@@ -24,8 +25,6 @@ class CarlPlayback {
     void playVoice(uint8_t voice);
     void play(void);
     void stop(void);
-
-    friend void onStepCallback(uint32_t tick, uint8_t track);
 };
 
 #endif // !H_CARL_PLAYBACK
