@@ -10,9 +10,10 @@
             "includePath": [
                 "c:/Users/ugly/Documents/GitHub/carl-drum-machine/include",
                 "c:/Users/ugly/Documents/GitHub/carl-drum-machine/src",
-                "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/BeatPattern/src",
-                "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/CarlI2C/src",
                 "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/CarlSerial/src",
+                "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/CarlI2C/src",
+                "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/BeatPattern/src",
+                "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/TestSequencer/src",
                 "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/modeDebug/src",
                 "c:/Users/ugly/Documents/GitHub/carl-drum-machine/.pio/libdeps/native/Unity/src",
                 ""
@@ -22,9 +23,10 @@
                 "path": [
                     "c:/Users/ugly/Documents/GitHub/carl-drum-machine/include",
                     "c:/Users/ugly/Documents/GitHub/carl-drum-machine/src",
-                    "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/BeatPattern/src",
-                    "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/CarlI2C/src",
                     "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/CarlSerial/src",
+                    "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/CarlI2C/src",
+                    "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/BeatPattern/src",
+                    "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/TestSequencer/src",
                     "c:/Users/ugly/Documents/GitHub/carl-drum-machine/lib/modeDebug/src",
                     "c:/Users/ugly/Documents/GitHub/carl-drum-machine/.pio/libdeps/native/Unity/src",
                     ""
@@ -34,7 +36,7 @@
                 "PLATFORMIO=60119",
                 ""
             ],
-            "compilerPath": "gcc",
+            "compilerPath": "C:/msys64/ucrt64/bin/gcc.exe",
             "compilerArgs": [
                 ""
             ]
