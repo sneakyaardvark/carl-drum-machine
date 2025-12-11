@@ -70,7 +70,8 @@ void CarlI2C::addressScan(I2CDevice devices[4]){
 
         Wire.beginTransmission(address);
         error = Wire.endTransmission();
-
+        Serial.print("address=");
+        Serial.println(address);
         switch(error){
             case 0: // add recognized devices to device id index
                 if(address == GPIO_ADDR){
@@ -85,6 +86,10 @@ void CarlI2C::addressScan(I2CDevice devices[4]){
         
                 busMember = true; 
 
+                print("mappable device found at ");
+                println(address);
+                print("name ");
+                println(deviceName);
                 //I2CDeviceBuild(devices, deviceName, numDevices, address, busMember);
                 break;
             
@@ -92,6 +97,8 @@ void CarlI2C::addressScan(I2CDevice devices[4]){
                 deviceName = "UNK";
                 busMember = false;
 
+                print("UNK device found at ");
+                println(address);
                 //I2CDeviceBuild(devices, deviceName, numDevices, address, busMember);
                 break;
 
