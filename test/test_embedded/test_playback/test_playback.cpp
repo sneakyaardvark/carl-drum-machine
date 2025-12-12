@@ -19,13 +19,11 @@ void onStepCallback(uint32_t tick, uint8_t track) {
   if (tick % 2) {
     // 1/8
     if (track == 0) {
-      pb->playVoice(0);
-      // if (carl.patterns[track].isBeatOn((tick % 2) % 16))
-      //   pb->playVoice(track);
+      // pb->playVoice(0);
+      // ESP_LOGE("stepCB", "[%u] tick", track);
     }
   }
 }
-
 void setup() {
   esp_log_level_set("*", ESP_LOG_ERROR);
   if (!SPIFFS.begin(true)) {
@@ -41,15 +39,16 @@ void setup() {
   pb->i2s.setVoice(2, file);
   pb->i2s.setVoice(3, file);
   pb->play();
+  pb->playVoice(0);
 }
 
 void loop() {
-  // unsigned long now = millis();
-  // if (now - last_millis > 3000) {
-  //   ESP_LOGE("main", "play3");
-  //   pb->playVoice(0);
-  //   last_millis = now;
-  // }
+  unsigned long now = millis();
+  if (now - last_millis > 3000) {
+    ESP_LOGE("main", "play3");
+    pb->playVoice(0);
+    last_millis = now;
+  }
   // Your main code here
   // if (test == 96) {
   //   ESP_LOGE("PLAYBACK", "beat!");

@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define NUM_FRAMES_TO_SEND 64
+#define NUM_FRAMES_TO_SEND 256
 
 static const char *TAG = "I2S";
 
@@ -30,7 +30,7 @@ void I2SWriterTask(void* param) {
   }
   while (true)
   {
-    if (1 /* TODO: check if we should be playing back */) {
+    if (output->enabled) {
       size_t bytesWritten = 0;
       do {
         // buffer has been sent -- create a new one
@@ -38,22 +38,25 @@ void I2SWriterTask(void* param) {
           for (int i = 0; i < NUM_FRAMES_TO_SEND; i++) {
             float sample = 0;
             for (auto &voice : output->voices) {
-              if (voice.play_position < voice.src->get_total_number_samples()) {
-                // sample += voice.volume * (voice.src->get_sample(voice.play_position) - 128.0f) / 128.0f;
-                // sample += voice.volume * (voice.src->get_sample(voice.play_position) - INT16_MAX) / INT16_MAX;
-                sample += (voice.volume * voice.src->get_sample(voice.play_position)) / I2S_SAMPLE_MAX;
-                voice.play_position += 1;
-              } else {
-                ESP_LOGE(TAG, "voice finished playing");
-              }
+                ESP_LOGD(TAG, "play=%u;pp=%u;ttl_s=%u", voice.play, voice.play_position, voice.src->get_total_number_samples());
+                if (voice.play_position < voice.src->get_total_number_samples()) {
+                  sample += (float)(voice.src->get_sample(voice.play_position)) / I2S_SAMPLE_MAX;
+                  ESP_LOGD(TAG, "add=%u", voice.src->get_sample(voice.play_position));
+                  if (xSemaphoreTake(voice.xMutex, portMAX_DELAY) == pdTRUE) {
+                    voice.play_position += 1;
+                    xSemaphoreGive(voice.xMutex);
+                  }
+                } else {
+                  ESP_LOGD(TAG, "voice finished playing");
+                }
+              
             }
             // apply clipping
             sample = tanhf(sample);
+            // ESP_LOGD(TAG, "sample=%f", sample * I2S_SAMPLE_MAX);
+
             // output it
-            // frames[i].left = frames[i].right = sample * (INT16_MAX / 2) - 1;
             frames[i].left = frames[i].right = sample * I2S_SAMPLE_MAX;
-            // frames[i].left = sample * 16383; // multiply to get a reasonable sample value out of the ratio
-            // frames[i].right = sample * 16383;
           }
           // how many bytes do we now have to send
           availableBytes = NUM_FRAMES_TO_SEND * sizeof(frame_t);
@@ -71,6 +74,11 @@ void I2SWriterTask(void* param) {
           ESP_LOGD(TAG, "sent %u bytes", bytesWritten);
         }
       } while (bytesWritten > 0);
+    } else {
+      // if (availableBytes != 0) {
+      //   availableBytes = 0;
+      // }
+      vTaskDelay(1);
     }
   }
 }
@@ -83,18 +91,20 @@ void I2SOutput::begin() {
   xTaskCreatePinnedToCore(I2SWriterTask, "i2s_writer", 4096, this, 2, &i2sWriterTask, 1);
 }
 
-void I2SOutput::add(WAVFile *file, float volume) {
-  ESP_LOGI(TAG, "Adding wav file to voices");
-  for (auto &voice : voices) {
-    if (voice.play_position == voice.src->get_number_samples())
-    {
-        voice.src = file;
-        voice.play_position = 0;
-        voice.volume = volume;
-        return;
-    }
+void I2SOutput::setVoice(uint8_t num, WAVFile *file) {
+  ESP_LOGE(TAG, "Setting voice %u", num);
+  Voice_t v = {
+    .src = file,
+    .xMutex = xSemaphoreCreateMutex(),
+    .play_position = file->get_total_number_samples(),
+  };
+  voices[num] = v;
+}
+
+void I2SOutput::play(uint8_t voice) {
+  if (xSemaphoreTake(voices[voice].xMutex, portMAX_DELAY) == pdTRUE) {
+    voices[voice].play_position = 0;
+    xSemaphoreGive(voices[voice].xMutex);
   }
-  voices.push_back({.src = file,
-                    .play_position = 0,
-                    .volume = volume});
+  ESP_LOGE(TAG, "play voice %u", voice);
 }

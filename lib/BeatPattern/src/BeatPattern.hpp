@@ -2,17 +2,20 @@
 #define H_CARL_BEAT_PATTERN
 #include <stdint.h>
 
-typedef uint16_t beat_pattern;
+typedef uint8_t *beat_pattern;
 
 class BeatPattern {
   private:
-    beat_pattern beat;
+    uint8_t beats[8];
+    void (*onBeatChangedCallback)(uint8_t position, uint8_t state) = nullptr;
 
   public:
     BeatPattern();
+    bool isBeatOn(uint8_t position);
     void cycleBeat(uint8_t position);
     void clear();
     beat_pattern get();
+    void setOnBeatChanged(void (*callback)(uint8_t position, uint8_t state));
 };
 
 #endif // !H_CARL_BEAT_PATTERN

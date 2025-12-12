@@ -54,8 +54,8 @@ uint32_t WAVFile::get_total_number_samples(void) {
 }
 
 i2s_sample_t WAVFile::get_sample(uint32_t position) {
-  ESP_LOGI(TAG, "getting sample @ %u", position);
-  ESP_LOGI(TAG, "cached offset = %u", cached_sample_offset);
+  ESP_LOGV(TAG, "getting sample @ %u", position);
+  ESP_LOGV(TAG, "cached offset = %u", cached_sample_offset);
   if (position >= cached_sample_offset) {
     fetch_samples();
   }
@@ -63,7 +63,7 @@ i2s_sample_t WAVFile::get_sample(uint32_t position) {
 }
 
 void WAVFile::fetch_samples(void) {
-  ESP_LOGI(TAG, "available bytes:%d", file.available());
+  ESP_LOGD(TAG, "available bytes:%d", file.available());
   size_t bytes_read = file.read((uint8_t *)samples, sizeof(i2s_sample_t) * SAMPLE_FRAME_COUNT);
   if (bytes_read != sizeof(i2s_sample_t) * SAMPLE_FRAME_COUNT) {
     char buf[64];
@@ -75,9 +75,9 @@ void WAVFile::fetch_samples(void) {
   if (number_samples != SAMPLE_FRAME_COUNT) {
     ESP_LOGE(TAG, "number of samples fetched != SAMPLE_FRAME_COUNT (%u != %u)", number_samples, SAMPLE_FRAME_COUNT);
   }
-  ESP_LOGI(TAG, "fetched %u samples in %u bytes", number_samples, bytes_read);
+  ESP_LOGD(TAG, "fetched %u samples in %u bytes", number_samples, bytes_read);
   cached_sample_offset += number_samples;
-  ESP_LOGI(TAG, "cache offset=%u", cached_sample_offset);
+  ESP_LOGD(TAG, "cache offset=%u", cached_sample_offset);
 }
 
 static bool is_header_valid(wav_header_t* header) {

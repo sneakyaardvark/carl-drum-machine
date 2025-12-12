@@ -7,9 +7,9 @@
 
 #include <stdint.h>
 
-#define I2S_DOUT 26
-#define I2S_BCLK 5
-#define I2S_LRCLK 25
+#define I2S_DOUT 26 // A0
+#define I2S_BCLK 5 // SCK
+#define I2S_LRCLK 25 // A1
 /**
  * @brief the sample rate of the I2S bus
  */
