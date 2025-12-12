@@ -1,35 +1,58 @@
 #include "config.h"
 #include <Arduino.h>
-#include <BeatPattern.hpp>
+#include <Playback.hpp>
 #include <WAVFile.hpp>
+#include <esp_log.h>
+#include <uClock.h>
 #include <SPIFFS.h>
-#include <I2SOutput.hpp>
 
-struct carl {
-  uint8_t current_voice = 0;
-  beat_pattern pattern_mtx[NUM_VOICES][NUM_PATTERNS];
-  uint8_t tempo = DEFAULT_TEMPO; 
+CARL carl = {
+    .tempo = DEFAULT_TEMPO,
 };
+CarlPlayback *pb;
+WAVFile *file;
 
-struct carl CARL;
+unsigned long last_millis;
+volatile uint32_t test = 0;
 
-void setup() {
-  Serial.begin(115200);
-  if (!SPIFFS.begin(true)) {
-    Serial.println("Error mounting SPIFFS");
-    return;
+void onStepCallback(uint32_t tick, uint8_t track) {
+  if (tick % 2) {
+    // 1/8
+    if (track == 0) {
+      pb->playVoice(0);
+      // if (carl.patterns[track].isBeatOn((tick % 2) % 16))
+      //   pb->playVoice(track);
+    }
   }
-  Serial.println("starting I2S...");
-  I2SOutput *output = new I2SOutput();
-  output->begin();
-  Serial.println("I2S started!");
-
-  Serial.println("Loading WAV...");
-  WAVFile *file = new WAVFile("/sine.wav", 128);
-  Serial.println("WAV loaded!");
-  Serial.println("Playing in 2.0 seconds...");
-  delay(2);
-  output->add(file, 1.0f);
 }
 
-void loop() {}
+void setup() {
+  esp_log_level_set("*", ESP_LOG_ERROR);
+  if (!SPIFFS.begin(true)) {
+    ESP_LOGE("main", "Error mounting SPIFFS");
+    return;
+  }
+
+  file = new WAVFile("/sine.wav", 128);
+  pb = new CarlPlayback(DEFAULT_TEMPO, NUM_VOICES, onStepCallback);
+  pb->carl = &carl;
+  pb->i2s.setVoice(0, file);
+  pb->i2s.setVoice(1, file);
+  pb->i2s.setVoice(2, file);
+  pb->i2s.setVoice(3, file);
+  pb->play();
+}
+
+void loop() {
+  // unsigned long now = millis();
+  // if (now - last_millis > 3000) {
+  //   ESP_LOGE("main", "play3");
+  //   pb->playVoice(0);
+  //   last_millis = now;
+  // }
+  // Your main code here
+  // if (test == 96) {
+  //   ESP_LOGE("PLAYBACK", "beat!");
+  //   test = 0;
+  // }
+}
